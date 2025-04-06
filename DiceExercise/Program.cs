@@ -15,7 +15,7 @@ namespace DiceExercise {
             while (true) {
                 //Write(">>"); input = ReadLine() ?? "";
                 input = "3d6 3d8";
-				if (input.Length == 0)
+                if (input.Length == 0)
                     break;
 
                 diceList.Clear();
@@ -70,29 +70,29 @@ namespace DiceExercise {
                 }
 
                 for (
-					int[] currentComb = Enumerable.Range(0, dice).ToArray(); 
-					currentComb[0] <= dCount - dice; 
-					nextComb(currentComb, dCount, dice)
-				) {
+                    int[] currentComb = Enumerable.Range(0, dice).ToArray(); 
+                    currentComb[0] <= dCount - dice; 
+                    nextComb(currentComb, dCount, dice)
+                ) {
                     sideTots[dice].Add(0);
                     foreach (int j in currentComb)
-						sideTots[dice][^1] += diceList[j];
-				}
+                        sideTots[dice][^1] += diceList[j];
+                }
 
-				Write(dice.ToString() + ": ");
-				WriteLine(String.Join(' ', sideTots[dice]));
-			}
-			WriteLine();
+                Write(dice.ToString() + ": ");
+                WriteLine(String.Join(' ', sideTots[dice]));
+            }
+            WriteLine();
 
-			for (int x = min; x <= max; x++) {
+            for (int x = min; x <= max; x++) {
                 outcomeCounts.Add(0);
 
                 for (int dice = 0; dice < dCount; dice++) {
                     sign = dice % 2 == 0 ? 1 : -1;
 
-					foreach (int st in sideTots[dice].FindAll(st => st < x)) {
+                    foreach (int st in sideTots[dice].FindAll(st => st < x)) {
                         outcomeCounts[^1] += sign * Simplex(x - st, dCount);
-					}
+                    }
                 }
             }
         }

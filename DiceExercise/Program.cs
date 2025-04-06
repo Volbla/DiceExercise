@@ -14,8 +14,8 @@ namespace DiceExercise {
 
             while (true) {
                 //Write(">>"); input = ReadLine() ?? "";
-                input = "10d6";
-                if (input.Length == 0)
+                input = "3d6 3d8";
+				if (input.Length == 0)
                     break;
 
                 diceList.Clear();
@@ -57,8 +57,7 @@ namespace DiceExercise {
         }
 
         static void CountOutcomes(List<int> diceList, List<long> outcomeCounts, int min, int max) {
-            int sign, sideTot;
-            int dCount = diceList.Count;
+            int sign, dCount = diceList.Count;
 
             List<List<int>> sideTots = new List<List<int>>();
 
@@ -70,25 +69,30 @@ namespace DiceExercise {
                     continue;
                 }
 
-                int[] currentComb = Enumerable.Range(0, dice).ToArray();
-                for (; currentComb[0] <= dCount - dice; nextComb(currentComb, dCount, dice)) {
-                    sideTot = 0;
+                for (
+					int[] currentComb = Enumerable.Range(0, dice).ToArray(); 
+					currentComb[0] <= dCount - dice; 
+					nextComb(currentComb, dCount, dice)
+				) {
+                    sideTots[dice].Add(0);
                     foreach (int j in currentComb)
-                        sideTot += diceList[j];
-                    
-                    sideTots[dice].Add(sideTot);
+						sideTots[dice][^1] += diceList[j];
+				}
 
-                }
-            }
+				Write(dice.ToString() + ": ");
+				WriteLine(String.Join(' ', sideTots[dice]));
+			}
+			WriteLine();
 
-            for (int x = min; x <= max; x++) {
+			for (int x = min; x <= max; x++) {
                 outcomeCounts.Add(0);
 
                 for (int dice = 0; dice < dCount; dice++) {
                     sign = dice % 2 == 0 ? 1 : -1;
 
-                    foreach (int st in sideTots[dice])
+					foreach (int st in sideTots[dice].FindAll(st => st < x)) {
                         outcomeCounts[^1] += sign * Simplex(x - st, dCount);
+					}
                 }
             }
         }
@@ -96,7 +100,7 @@ namespace DiceExercise {
 
         // General math functions.
 
-        static int Combinations(int n, int r) {
+        static long Combinations(int n, int r) {
             if (r > n || r < 0) return 0;
             if (r == n || r == 0) return 1;
 
@@ -105,10 +109,10 @@ namespace DiceExercise {
                 c *= n - i;
                 c /= i + 1;
             }
-            return (int)c;
+            return c;
         }
 
-        static int Simplex(int x, int d) {
+        static long Simplex(int x, int d) {
             return Combinations(Math.Max(0, x - 1), d - 1);
         }
 
